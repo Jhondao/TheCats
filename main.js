@@ -3,6 +3,8 @@ const API_URL_RANDOM= 'https://api.thecatapi.com/v1/images/search?limit=2&api_ke
 
 const API_URL_FAVORITES= 'https://api.thecatapi.com/v1/favourites?api_key=live_UY8osHOdK0PVxP3zjagUB01e7NOhmZ3OorKCUjr1AXUVmjFpRbtnBlNuaUGuxr4c';
 
+const API_URL_FAVORITES_DELETE = (id) => `https://api.thecatapi.com/v1/favourites/${id}?api_key=live_UY8osHOdK0PVxP3zjagUB01e7NOhmZ3OorKCUjr1AXUVmjFpRbtnBlNuaUGuxr4c`;
+
 const spanError = document.getElementById('error');
 
 async function loadRandom(){
@@ -38,17 +40,23 @@ async function loadFavorites(){
     if (res.status !== 200) {
         spanError.innerHTML = "Hubo un error" + res.status + data.message;
     }else{
-        data.forEach(item =>{
-            
-            const section = document.getElementById('favoriteMichis');
+        const section = document.getElementById('favoriteMichis');
+        section.innerHTML ="";
+        const h2 = document.createElement('h2');
+        const h2text = document.createTextNode('Gatos favoritos');
+        h2.appendChild(h2text);
+        section.appendChild(h2);
+
+        data.forEach(item =>{  
             const article = document.createElement('article');
             const img = document.createElement('img');
             const btn = document.createElement('button');
             const btnText = document.createTextNode('Sacar el michi de favoritos');
 
-            btn.appendChild(btnText);
             img.src = item.image.url;
             img.width = 150;
+            btn.appendChild(btnText);
+            btn.onclick = () => deleteFavourite(item.id);
             article.appendChild(img);
             article.appendChild(btn);
             section.appendChild(article);
@@ -74,6 +82,23 @@ async function saveFavourite(id){
 
     if (res.status !== 200) {
         spanError.innerHTML = "Hubo un error" + res.status + data.message;
+    }else{
+        console.log('Guardado con exito en favoritos!');
+        loadFavorites();
+    }
+}
+
+async function deleteFavourite(id){
+    const res = await fetch(API_URL_FAVORITES_DELETE(id), {
+        method: 'DELETE'
+    });
+    const data = await res.json();
+
+    if (res.status !== 200) {
+        spanError.innerHTML = "Hubo un error" + res.status + data.message;
+    }else{
+        console.log('Eliminado con exito de favoritos');
+        loadFavorites();
     }
 }
 
