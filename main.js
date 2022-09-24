@@ -1,5 +1,5 @@
 const api = axios.create({
-    baseURL: 'https://api.thecatapi.com/v1/'
+    baseURL: 'https://api.thecatapi.com/v1'
 });
 
 api.defaults.headers.common['X-API-KEY'] = 'live_UY8osHOdK0PVxP3zjagUB01e7NOhmZ3OorKCUjr1AXUVmjFpRbtnBlNuaUGuxr4c';
@@ -77,24 +77,28 @@ async function loadFavorites(){
 }
 
 async function saveFavourite(id){
-    const res = await fetch(API_URL_FAVORITES, {
-        method: 'POST',
-        headers:{
-            'Content-Type':'application/json', 
-            'X-API-KEY': 'live_UY8osHOdK0PVxP3zjagUB01e7NOhmZ3OorKCUjr1AXUVmjFpRbtnBlNuaUGuxr4c',
-        },
-        body: JSON.stringify({
-            image_id: id
-        }),
+
+    const { data, status } = await api.post('/favourites',{
+        image_id:id,
     });
 
-    const data = await res.json();
+    // const res = await fetch(API_URL_FAVORITES, {
+    //     method: 'POST',
+    //     headers:{
+    //         'Content-Type':'application/json', 
+    //         'X-API-KEY': 'live_UY8osHOdK0PVxP3zjagUB01e7NOhmZ3OorKCUjr1AXUVmjFpRbtnBlNuaUGuxr4c',
+    //     },
+    //     body: JSON.stringify({
+    //         image_id: id
+    //     }),
+    // });
+
+    //const data = await res.json();
 
     console.log('Save');
-    console.log(res);
 
-    if (res.status !== 200) {
-        spanError.innerHTML = "Hubo un error" + res.status + data.message;
+    if (status !== 200) {
+        spanError.innerHTML = "Hubo un error" + status + data.message;
     }else{
         console.log('Guardado con exito en favoritos!');
         loadFavorites();
